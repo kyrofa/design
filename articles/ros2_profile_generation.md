@@ -36,4 +36,8 @@ Original Author: {{ page.author }}
     - This is why individual components oftentimes ship their own apparmor profiles (e.g. Apache). They know they are in the best position to define one, being maintainers, and they know the best way to get folks to lock down their applications is to help them get there by solving a piece of it for them.
     - SROS 2 is following a similar path, defining a way for upstream packages to specify the communication requirements of the nodes in the package, such that a final profile is as easy to generate by the end-user as possible
 - The package manifest
-    - foo
+    - First, let's discuss how upstream packages can ship the communication details necessary for end-users to generate good profiles.
+	- First of all, packages COULD just ship profiles for the nodes contained within.
+	- However, rather than use that, packages can provide a manifest that describe the parameters, topics, services, and actions provided or required by each node within the package. This provides all the information necessary to generate DDS profiles, while also providing the metadata necessary for future developments, such as interface-based design using graphical tools and static analysis of launch files (e.g. you're remapping a topic that no node is publishing)
+    - Here's an example of what that might look like
+	- Export from package.xml, include in package.xml, or make completely different?

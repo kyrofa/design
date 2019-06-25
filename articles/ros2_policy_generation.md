@@ -102,15 +102,15 @@ The package interface is exported from the `package.xml`, and might look somethi
       <node name="example_node">
         <parameter name="example_parameter" type="bool" \>
         <topic name="/foo/bar" type="std_msgs/String" publish="true" \>
-		<service name="/example_service" type="std_srvs/srv/Empty" client="true" \>
-		<action name="/example_action", type="example_interfaces/action/Fibonacci" server="true" \>
+        <service name="/example_service" type="std_srvs/srv/Empty" client="true" \>
+        <action name="/example_action", type="example_interfaces/action/Fibonacci" server="true" \>
       </node>
     </interface>
   </export>
 ```
 
 
-## Generating keys and policy for a launch file
+## Easily generating keys and policy
 
 - Utility for generating launch keys and profile
     - There are a few different pieces of information necessary generate keys and to
@@ -128,7 +128,18 @@ The package interface is exported from the `package.xml`, and might look somethi
 	  keys can be generated for all nodes, and a profile can be statically generated
 	  that covers the access required by the entire launch file.
 
+The ideal scenario is to make creating both the keys and the policy as easy as possible on the end user. A few different pieces of information are necessary in order to meet this goal:
 
+1. Knowledge of all nodes (and their packages) involved in the system
+2. Knowledge of which parameter/topic/service/action each node requires, and the type of access required
 
+Let's begin with (2). The exported package interface we just discussed provides most of this information but there's an important function for which we haven't accounted: remapping. Remapping happens at a higher level than where the DDS permissions are applied. In other words, the policy needs to reflect the expected communications of the system _post-remap_, or any remapping will be met by a denial.
+
+As it happens, the solution is the same as the solution for (1): a launch file. A launch file nicely describes the entire system: all nodes required (and their packages), as well as any remapping that need to be applied.
+
+Assuming that all nodes in the launch file have an accurate interface exported for it, it's a simple matter for the end user to generate both the keys and the policy required for a given launch file:
+
+1. Ensure a keystore has been generated: `ros2 security create_keystore <keystore path>`
+2. Generate the keys and policy required for the launch file: `ros2 security secure_launch_file <keystore path>, <launch file path>`
 
 [dds_security]: https://www.omg.org/spec/DDS-SECURITY/1.1/PDF
